@@ -1,70 +1,177 @@
-# Getting Started with Create React App
+# ⚗️ CHEMQUEST
+### *Học Hóa Học Vừa Chơi Vừa Học*
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+<div align="center">
 
-## Available Scripts
+![ChemQuest Banner](https://img.shields.io/badge/CHEMQUEST-HÓA%20HỌC%2011-00D9FF?style=for-the-badge&logo=atom&logoColor=white)
+![Version](https://img.shields.io/badge/version-2.0.0-D946EF?style=for-the-badge)
+![React](https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=black)
+![License](https://img.shields.io/badge/license-MIT-CCFF00?style=for-the-badge)
 
-In the project directory, you can run:
+**🔗 [Chơi ngay →](https://chemquest-game.vercel.app)**
 
-### `npm start`
+</div>
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+---
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## 🎮 Giới thiệu
 
-### `npm test`
+**ChemQuest** là game luyện tập Hóa học lớp 11 theo phong cách **Cyberpunk Neon** — kết hợp học thuật và giải trí. Được thiết kế để giúp học sinh ôn tập hiệu quả thông qua hệ thống điểm thưởng, streak bonus và hiệu ứng âm thanh sống động.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+> *"Không còn học Hóa nhàm chán — mỗi câu đúng là một màn pháo hoa!"*
 
-### `npm run build`
+---
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## ✨ Tính năng nổi bật
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### 🧪 Nội dung học tập
+| Chương | Nội dung | Số câu |
+|--------|----------|--------|
+| 📘 Chương 1 | Cân Bằng Hóa Học | 36 câu |
+| 📗 Chương 2 | Nitrogen & Sulfur | 32 câu |
+| 📙 Chương 3 | Hóa Học Hữu Cơ | 37 câu |
+| **Tổng** | **3 chương · 4 dạng câu** | **112 câu** |
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### 🎯 4 Dạng câu hỏi
+- **📝 Trắc nghiệm ABCD** — chọn 1 trong 4 đáp án
+- **⚖️ Đúng / Sai** — đánh giá 4 phát biểu độc lập
+- **✏️ Điền từ** — tự nhập câu trả lời (có ví dụ gợi ý)
+- **🔗 Nối cột** — kéo nối Cột A với Cột B
 
-### `npm run eject`
+### 🔥 Hệ thống Streak Bonus
+```
+Streak ×3  →  +5%  điểm mỗi câu  🔥
+Streak ×5  →  +15% điểm mỗi câu  🔥🔥
+Streak ×10 →  +20% điểm mỗi câu  🔥🔥🔥 INFERNO
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### 🎵 Âm thanh Cinematic
+Toàn bộ âm thanh được tạo bằng **Web Audio API** — không cần tải file:
+- 🎹 Click cơ học | ✅ Đúng vui | ❌ Sai cyberpunk
+- ⏱ Hết giờ dramatic | 💥 Fanfare INFERNO hoành tráng
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### 💥 Hiệu ứng Animation
+- Pháo hoa nhiều đợt khi đúng
+- Màn hình rung + glitch khi sai
+- +XP nổi lên sau mỗi câu
+- Milestone popup khi đạt streak
+- Chuyển cảnh wipe laser giữa các câu
+- Shimmer & neon glow trên mọi element
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+---
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## 📱 Responsive Design
 
-## Learn More
+| Thiết bị | Giao diện |
+|----------|-----------|
+| 💻 Desktop | Sidebar thống kê bên phải |
+| 📱 Mobile | Thanh compact timer + combo |
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+---
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## 🚀 Cài đặt & Chạy local
 
-### Code Splitting
+### Yêu cầu
+- Node.js v18+
+- npm v10+
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+### Các bước
 
-### Analyzing the Bundle Size
+```bash
+# 1. Clone repo
+git clone https://github.com/Foxkun-dev/chemquest.git
+cd chemquest
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+# 2. Cài dependencies
+npm install
 
-### Making a Progressive Web App
+# 3. Chạy development
+npm start
+# → Mở http://localhost:3000
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+# 4. Build production
+npm run build
+```
 
-### Advanced Configuration
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+## 🛠️ Tech Stack
 
-### Deployment
+```
+Frontend    React 19 + Web Audio API
+Styling     Inline CSS + CSS Animations
+Fonts       Orbitron · Space Mono · JetBrains Mono
+Deploy      Vercel (auto-deploy on push)
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+---
 
-### `npm run build` fails to minify
+## 🎮 Cách chơi
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+```
+1. Chọn chương và mức độ muốn ôn (hoặc chơi tất cả)
+2. Xem trước danh sách câu hỏi bằng nút ▾
+3. Bấm ⚡ BẮT ĐẦU NHIỆM VỤ
+4. Trả lời trong 30 giây mỗi câu
+5. Xây dựng chuỗi streak để nhân điểm
+6. Xem kết quả sau 30 câu
+```
+
+**Mẹo:** Trả lời nhanh sẽ có thêm điểm thưởng thời gian!
+
+---
+
+## 📊 Cấu trúc câu hỏi
+
+```javascript
+// Trắc nghiệm
+{ type: "mc", chapter: 0, level: "BIẾT",
+  q: "Câu hỏi...", opts: ["A","B","C","D"], ans: 0 }
+
+// Đúng/Sai
+{ type: "tf", chapter: 1, level: "HIỂU",
+  q: "Tiêu đề...", items: [{ text: "...", correct: true }] }
+
+// Điền từ
+{ type: "fill", chapter: 2, level: "BIẾT",
+  q: "Điền vào chỗ ___", example: "Ví dụ: ...",
+  ans: "đáp án", accepts: ["đáp án", "dap an"] }
+
+// Nối cột
+{ type: "match", chapter: 1, level: "HIỂU",
+  q: "Nối cột A với cột B:",
+  colA: ["1","2","3","4"], colB: ["A","B","C","D"],
+  ans: [2, 0, 3, 1] }
+```
+
+---
+
+## 👥 Tác giả
+
+<div align="center">
+
+| Vai trò | Người thực hiện |
+|---------|----------------|
+| 🎯 Thiết kế & Lập trình chính | **Chính Dlam** |
+| 🤝 Hỗ trợ | **Tkien** |
+
+
+</div>
+
+---
+
+## 📄 License
+
+MIT License © 2026 ChemQuest Team
+
+---
+
+<div align="center">
+
+**⚗️ ChemQuest © 2026 — Học Hóa Học Vừa Chơi Vừa Học**
+
+*Phong cách: Neon Glow + Interactive · Hóa Học Cấp 3*
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/Foxkun-dev/chemquest)
+
+</div>

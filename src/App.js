@@ -673,6 +673,47 @@ const QUESTIONS = [
       { text:"Alkane và alkene đều làm mất màu dung dịch Br₂.", correct:false },
     ]},
 
+
+  // ══ ĐIỀN TỪ ══════════════════════════════════════════════════════════════════
+  { id:106, chapter:0, type:"fill", level:"BIẾT",
+    q:"Ở trạng thái cân bằng hóa học, tốc độ phản ứng thuận ___ tốc độ phản ứng nghịch.",
+    example:"Ví dụ: N₂ + 3H₂ ⇌ 2NH₃. Khi hệ đạt cân bằng, v_thuận = v_nghịch ≠ 0.",
+    ans:"bằng", accepts:["bằng","bằng nhau","= nhau","bang","bang nhau"] },
+
+  { id:107, chapter:1, type:"fill", level:"BIẾT",
+    q:"Công thức phân tử của ammonia (amoniac) là ___.",
+    example:"Ví dụ: Sulfuric acid có công thức là H₂SO₄.",
+    ans:"NH₃", accepts:["nh3","NH3","nh₃","NH₃"] },
+
+  { id:108, chapter:1, type:"fill", level:"HIỂU",
+    q:"Kim loại đồng (Cu) tác dụng với HNO₃ loãng tạo ra muối đồng nitrate, nước và khí ___.",
+    example:"Ví dụ: Fe + 4HNO₃(loãng) → Fe(NO₃)₃ + NO↑ + 2H₂O.",
+    ans:"NO", accepts:["no","NO","khí no","khí NO"] },
+
+  { id:109, chapter:2, type:"fill", level:"BIẾT",
+    q:"Alkane có công thức tổng quát là CₙH___, với n ≥ 1.",
+    example:"Ví dụ: Methane CH₄ (n=1): 2×1+2 = 4; Ethane C₂H₆ (n=2): 2×2+2 = 6.",
+    ans:"2n+2", accepts:["2n+2","2n + 2","2(n+1)"] },
+
+  // ══ NỐI CỘT ══════════════════════════════════════════════════════════════════
+  { id:110, chapter:1, type:"match", level:"HIỂU",
+    q:"Nối tên hợp chất ở cột A với tính chất đặc trưng ở cột B:",
+    colA:["NH₃","HNO₃ đặc nguội","H₂SO₄ đặc","SO₂"],
+    colB:["Thụ động hóa Al, Fe","Có tính khử","Có tính base","Háo nước, hút ẩm"],
+    ans:[2, 0, 3, 1] },
+
+  { id:111, chapter:0, type:"match", level:"HIỂU",
+    q:"Nối yếu tố tác động ở cột A với ảnh hưởng đến cân bằng hóa học ở cột B:",
+    colA:["Tăng nồng độ chất phản ứng","Tăng nhiệt độ (phản ứng thu nhiệt)","Thêm chất xúc tác","Tăng áp suất (có khí, Δn≠0)"],
+    colB:["Dịch cân bằng theo chiều giảm mol khí","Không làm dịch chuyển cân bằng","Dịch cân bằng theo chiều thuận","Dịch cân bằng theo chiều thuận"],
+    ans:[2, 3, 1, 0] },
+
+  { id:112, chapter:2, type:"match", level:"HIỂU",
+    q:"Nối loại hydrocarbon ở cột A với đặc điểm công thức/phản ứng đặc trưng ở cột B:",
+    colA:["Alkane","Alkene","Alkyne","Arene (Benzene)"],
+    colB:["Công thức CₙH₂ₙ₋₂, phản ứng cộng và trùng hợp","Vòng thơm, phản ứng thế đặc trưng","Công thức CₙH₂ₙ₊₂, phản ứng thế halogen","Công thức CₙH₂ₙ, có 1 liên kết đôi C=C"],
+    ans:[2, 3, 0, 1] },
+
   { id:105, chapter:2, type:"tf", level:"VẬN DỤNG",
     q:"Xét các phát biểu về đặc điểm và phân tích hợp chất hữu cơ. Chọn Đúng/Sai:",
     items:[
@@ -776,6 +817,8 @@ export default function App() {
   const [phase, setPhase]   = useState("playing");
   const [selected, setSelected] = useState(null);
   const [tfSelections, setTfSelections] = useState({});
+  const [fillAnswer, setFillAnswer]       = useState("");     // điền từ
+  const [matchSelections, setMatchSelections] = useState({}); // nối cột
   const [flash, setFlash]   = useState("");
   const [toasts, setToasts] = useState([]);
   const [particles, setParticles] = useState([]);
@@ -792,7 +835,19 @@ export default function App() {
     if (filterChapter !== null) pool = pool.filter(q=>q.chapter===filterChapter);
     if (filterLevel) pool = pool.filter(q=>q.level===filterLevel);
     if (pool.length === 0) pool = QUESTIONS;
-    const shuffled = [...pool].sort(()=>Math.random()-0.5).slice(0,15);
+    // Chọn 30 câu: ≥3 TF, ≥3 fill/match, phần còn lại từ MC
+    const tfPool   = pool.filter(q=>q.type==="tf").sort(()=>Math.random()-0.5);
+    const newPool  = pool.filter(q=>q.type==="fill"||q.type==="match").sort(()=>Math.random()-0.5);
+    const mcPool   = pool.filter(q=>q.type==="mc").sort(()=>Math.random()-0.5);
+    const gTF  = tfPool.slice(0, Math.min(3, tfPool.length));
+    const gNew = newPool.slice(0, Math.min(3, newPool.length));
+    const used = new Set([...gTF.map(q=>q.id), ...gNew.map(q=>q.id)]);
+    const remaining = [...tfPool.filter(q=>!used.has(q.id)),
+                       ...newPool.filter(q=>!used.has(q.id)),
+                       ...mcPool]
+      .sort(()=>Math.random()-0.5)
+      .slice(0, 30 - gTF.length - gNew.length);
+    const shuffled = [...gTF, ...gNew, ...remaining].sort(()=>Math.random()-0.5);
     setQueue(shuffled); setQIdx(0); setScore(0); setCombo(0); setResults([]);
     setPhase("playing"); setSelected(null); setTfSelections({}); setTimer(TIMER_MAX);
     setScreen("game");
@@ -801,7 +856,7 @@ export default function App() {
   const current = queue[qIdx];
 
   useEffect(()=>{ if(screen!=="game") return; setInputReset(); }, [qIdx]);
-  function setInputReset(){ setPhase("playing"); setSelected(null); setTfSelections({}); setTimer(TIMER_MAX); }
+  function setInputReset(){ setPhase("playing"); setSelected(null); setTfSelections({}); setFillAnswer(""); setMatchSelections({}); setTimer(TIMER_MAX); }
 
   useEffect(()=>{
     if(screen!=="game"||phase!=="playing"){ clearInterval(timerRef.current); return; }
@@ -949,6 +1004,68 @@ export default function App() {
     setSelected(true); setPhase("answered");
   }
 
+  function submitFill(){
+    if(phase!=="playing") return;
+    clearInterval(timerRef.current);
+    const raw = fillAnswer.trim().toLowerCase();
+    const accepted = current.accepts.map(a=>a.toLowerCase());
+    const correct = accepted.includes(raw);
+    const newCombo = correct ? combo+1 : 0;
+    const earned = correct ? calcEarned(100, timer, newCombo) : 0;
+    const tier = getStreakTier(newCombo);
+    if(correct){
+      triggerFlash("green"); boom(CL.green,22); boom(tier?tier.color:CL.blue,12);
+      setScore(s=>s+earned); setCombo(newCombo);
+      toast(`⚡ ĐÚNG! +${earned} XP${tier?" "+tier.label:""}`);
+      spawnXP(earned, true); showMilestone(newCombo);
+      if(newCombo>=10) playSound("streak10");
+      else if(newCombo>=5) playSound("streak5");
+      else if(newCombo>=3) playSound("streak3");
+      else playSound("correct");
+    } else {
+      triggerFlash("red"); boom(CL.red,10);
+      triggerShake(); triggerGlitch(); spawnXP(0,false);
+      if(combo>=3) playSound("loseStreak"); else playSound("wrong");
+      setCombo(0); toast("❌ Sai rồi!",true);
+    }
+    setResults(r=>[...r,{correct,earned}]);
+    setPhase("answered");
+  }
+
+  function submitMatch(){
+    if(phase!=="playing") return;
+    const n = current.colA.length;
+    if(Object.keys(matchSelections).length < n){ toast("Hãy nối hết tất cả các ý!",true); return; }
+    clearInterval(timerRef.current);
+    const correctCount = current.colA.reduce((acc,_,i)=> acc + (matchSelections[i]===current.ans[i]?1:0), 0);
+    const allCorrect = correctCount === n;
+    const partial = correctCount >= Math.ceil(n*0.6);
+    const base = allCorrect?150:partial?60:0;
+    const newCombo = allCorrect?combo+1:0;
+    const earned = base>0?calcEarned(base,timer,newCombo):0;
+    const tier = getStreakTier(newCombo);
+    if(allCorrect){
+      triggerFlash("green"); boom(CL.green,26); boom(tier?tier.color:CL.blue,13);
+      toast(`⚡ HOÀN HẢO! +${earned} XP${tier?" "+tier.label:""}`);
+      setCombo(newCombo); spawnXP(earned,true); showMilestone(newCombo);
+      if(newCombo>=10) playSound("streak10");
+      else if(newCombo>=5) playSound("streak5");
+      else if(newCombo>=3) playSound("streak3");
+      else playSound("correct");
+    } else if(partial){
+      triggerFlash("green"); setCombo(0);
+      toast(`✓ ${correctCount}/${n} đúng · +${earned} XP`);
+      playSound("correct");
+    } else {
+      triggerFlash("red"); boom(CL.red,10); setCombo(0);
+      toast(`❌ Chỉ đúng ${correctCount}/${n}`,true);
+      if(combo>=3) playSound("loseStreak"); else playSound("wrong");
+    }
+    setScore(s=>s+earned);
+    setResults(r=>[...r,{correct:allCorrect,partial,earned}]);
+    setSelected(true); setPhase("answered");
+  }
+
   function next(){
     const isLast = qIdx+1>=queue.length;
     const lastResult = results[results.length-1];
@@ -1017,8 +1134,126 @@ export default function App() {
 
       <Footer/>
       {screen==="menu"   && <Menu filterChapter={filterChapter} setFilterChapter={setFilterChapter} filterLevel={filterLevel} setFilterLevel={setFilterLevel} startGame={startGame}/>}
-      {screen==="game" && current && <Game transitioning={transitioning} current={current} qIdx={qIdx} total={queue.length} score={score} combo={combo} timer={timer} phase={phase} selected={selected} tfSelections={tfSelections} toggleTF={(i,v)=>{ if(phase==="playing") setTfSelections(s=>({...s,[i]:v})); }} submitMC={submitMC} submitTF={submitTF} next={next} setScreen={setScreen}/>}
+      {screen==="game" && current && <Game transitioning={transitioning} current={current} qIdx={qIdx} total={queue.length} score={score} combo={combo} timer={timer} phase={phase} selected={selected} tfSelections={tfSelections} toggleTF={(i,v)=>{ if(phase==="playing") setTfSelections(s=>({...s,[i]:v})); }} submitMC={submitMC} submitTF={submitTF} fillAnswer={fillAnswer} setFillAnswer={setFillAnswer} submitFill={submitFill} matchSelections={matchSelections} setMatchSelections={setMatchSelections} submitMatch={submitMatch} next={next} setScreen={setScreen}/>}
       {screen==="summary"&& <Summary results={results} score={score} total={queue.length} setScreen={setScreen} startGame={startGame}/>}
+    </div>
+  );
+}
+
+// ─── QUESTION PREVIEW ─────────────────────────────────────────────────────────
+function QuestionPreview({ filterChapter, filterLevel, isMobile }) {
+  const [expanded, setExpanded] = useState(false);
+
+  let pool = QUESTIONS;
+  if (filterChapter !== null) pool = pool.filter(q => q.chapter === filterChapter);
+  if (filterLevel) pool = pool.filter(q => q.level === filterLevel);
+  if (pool.length === 0) pool = QUESTIONS;
+
+  const total = pool.length;
+  const willPlay = Math.min(30, total);
+  const mcCount    = pool.filter(q => q.type === "mc").length;
+  const tfCount    = pool.filter(q => q.type === "tf").length;
+  const fillCount  = pool.filter(q => q.type === "fill").length;
+  const matchCount = pool.filter(q => q.type === "match").length;
+
+  const chapterColor = filterChapter !== null ? CHAPTERS[filterChapter].color : CL.blue;
+  const levelColor = filterLevel ? LEVELS[filterLevel] : CL.blue;
+  const accentColor = filterChapter !== null ? chapterColor : levelColor;
+
+  return (
+    <div style={{background:"rgba(0,0,0,0.5)",border:`1px solid ${accentColor}33`,
+      borderRadius:4,overflow:"hidden",animation:"fadeSlideIn 0.3s ease"}}>
+      {/* Header — click to expand */}
+      <button onClick={()=>{playSound("click");setExpanded(e=>!e);}}
+        style={{width:"100%",display:"flex",alignItems:"center",gap:12,
+          padding:"12px 16px",background:"transparent",border:"none",
+          cursor:"pointer",outline:"none",textAlign:"left"}}>
+        <div style={{width:8,height:8,borderRadius:"50%",background:accentColor,
+          boxShadow:`0 0 8px ${accentColor}`,flexShrink:0,
+          animation:"pulseGlow 1.5s ease-in-out infinite"}}/>
+        <div style={{flex:1}}>
+          <div style={{fontFamily:"'Space Mono',monospace",fontSize:9,color:accentColor,
+            letterSpacing:3,marginBottom:3}}>XEM TRƯỚC CÂU HỎI</div>
+          <div style={{fontFamily:"'JetBrains Mono',monospace",fontSize:11,color:"#94A3B8"}}>
+            {total} câu phù hợp · Sẽ chọn {willPlay} câu
+            <span style={{color:CL.dim,marginLeft:6}}>({mcCount} ABCD · {tfCount} Đ/S · {fillCount} Điền · {matchCount} Nối)</span>
+          </div>
+        </div>
+        <div style={{fontFamily:"'Space Mono',monospace",fontSize:10,
+          color:accentColor,transition:"transform 0.3s",
+          transform:expanded?"rotate(180deg)":"rotate(0deg)"}}>▾</div>
+      </button>
+
+      {/* Expandable list */}
+      {expanded && (
+        <div style={{borderTop:`1px solid ${accentColor}22`,maxHeight:360,overflowY:"auto",
+          padding:"8px 0"}}>
+          {/* Stats mini bar */}
+          <div style={{display:"flex",gap:10,padding:"6px 16px 10px",flexWrap:"wrap"}}>
+            {Object.entries(LEVELS).map(([lv,col])=>{
+              const n = pool.filter(q=>q.level===lv).length;
+              if(!n) return null;
+              return (
+                <div key={lv} style={{display:"flex",alignItems:"center",gap:5}}>
+                  <div style={{width:6,height:6,borderRadius:"50%",background:col}}/>
+                  <span style={{fontFamily:"'Space Mono',monospace",fontSize:8,color:col}}>{lv}: {n}</span>
+                </div>
+              );
+            })}
+          </div>
+          {pool.map((q, idx) => {
+            const ch = CHAPTERS[q.chapter];
+            const lvColor = LEVELS[q.level] || CL.blue;
+            return (
+              <div key={q.id} style={{
+                display:"flex",alignItems:"flex-start",gap:10,
+                padding:"8px 16px",
+                borderBottom:"1px solid rgba(255,255,255,0.04)",
+                background:idx%2===0?"rgba(255,255,255,0.01)":"transparent",
+                transition:"background 0.15s"
+              }}>
+                {/* Index */}
+                <div style={{fontFamily:"'Orbitron',monospace",fontSize:10,
+                  color:CL.dim,flexShrink:0,marginTop:2,minWidth:22}}>
+                  {String(idx+1).padStart(2,"0")}
+                </div>
+                {/* Question text */}
+                <div style={{flex:1,minWidth:0}}>
+                  <div style={{fontSize:isMobile?11:12,color:"#CBD5E1",
+                    lineHeight:1.5,
+                    overflow:"hidden",textOverflow:"ellipsis",
+                    display:"-webkit-box",WebkitLineClamp:2,WebkitBoxOrient:"vertical"}}>
+                    {q.q}
+                  </div>
+                  <div style={{display:"flex",gap:6,marginTop:5,flexWrap:"wrap"}}>
+                    <span style={{fontFamily:"'Space Mono',monospace",fontSize:8,
+                      color:ch.color,background:ch.color+"12",
+                      padding:"1px 6px",borderRadius:2,border:`1px solid ${ch.color}33`}}>
+                      {ch.name.toUpperCase().slice(0,isMobile?6:20)}
+                    </span>
+                    <span style={{fontFamily:"'Space Mono',monospace",fontSize:8,
+                      color:lvColor,background:lvColor+"12",
+                      padding:"1px 6px",borderRadius:2,border:`1px solid ${lvColor}33`}}>
+                      {q.level}
+                    </span>
+                    <span style={{fontFamily:"'Space Mono',monospace",fontSize:8,
+                      color:q.type==="tf"?CL.purple:CL.blue,
+                      background:q.type==="tf"?CL.purple+"12":CL.blue+"12",
+                      padding:"1px 6px",borderRadius:2,
+                      border:`1px solid ${q.type==="tf"?CL.purple:CL.blue}33`}}>
+                      {q.type==="mc"?"ABCD":"Đ/S"}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+          <div style={{padding:"10px 16px",fontFamily:"'Space Mono',monospace",
+            fontSize:9,color:CL.dim,textAlign:"center",borderTop:`1px solid ${accentColor}15`}}>
+            Game sẽ chọn ngẫu nhiên {willPlay} câu · ít nhất 3 Đúng/Sai
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -1045,7 +1280,7 @@ function Menu({filterChapter,setFilterChapter,filterLevel,setFilterLevel,startGa
         </div>
         <div style={{display:"flex",alignItems:"center",gap:10,justifyContent:"center",marginTop:12}}>
           <div style={{flex:1,maxWidth:80,height:1,background:"linear-gradient(90deg,transparent,rgba(0,217,255,0.4))"}}/>
-          <div style={{fontFamily:"'Space Mono',monospace",fontSize:10,color:"#00D9FF99",letterSpacing:4}}>HÓA HỌC 10 - 12</div>
+          <div style={{fontFamily:"'Space Mono',monospace",fontSize:10,color:"#00D9FF99",letterSpacing:4}}>TRẮC NGHIỆM HÓA HỌC CẤP 3</div>
           <div style={{flex:1,maxWidth:80,height:1,background:"linear-gradient(90deg,rgba(0,217,255,0.4),transparent)"}}/>
         </div>
       </div>
@@ -1089,7 +1324,7 @@ function Menu({filterChapter,setFilterChapter,filterLevel,setFilterLevel,startGa
           </div>
         </div>
 
-        {/* Filters */}
+        {/* Filters + Preview */}
         <div style={{background:"rgba(0,0,0,0.4)",border:"1px solid rgba(0,217,255,0.12)",padding:"16px 20px",borderRadius:4,backdropFilter:"blur(10px)",position:"relative",overflow:"hidden"}}>
           <div style={{position:"absolute",top:0,left:0,right:0,height:2,background:"linear-gradient(90deg,transparent,#00D9FF,transparent)"}}/>
           <div style={{display:"flex",flexDirection:"column",gap:16}}>
@@ -1117,6 +1352,9 @@ function Menu({filterChapter,setFilterChapter,filterLevel,setFilterLevel,startGa
           </div>
         </div>
 
+        {/* Question preview panel */}
+        <QuestionPreview filterChapter={filterChapter} filterLevel={filterLevel} isMobile={isMobile}/>
+
         {/* Start button */}
         <button
           onMouseEnter={()=>setHoverBtn("start")} onMouseLeave={()=>setHoverBtn(null)}
@@ -1134,7 +1372,7 @@ function Menu({filterChapter,setFilterChapter,filterLevel,setFilterLevel,startGa
         </button>
 
         <div style={{fontFamily:"'Space Mono',monospace",fontSize:9,color:CL.dim,letterSpacing:1,textAlign:"center",paddingBottom:50}}>
-          {TIMER_MAX}s mỗi câu · Tối đa 15 câu mỗi ván · Hóa Học Từ 10-12
+          {TIMER_MAX}s mỗi câu · 30 câu mỗi ván · ≥3 Đúng/Sai + Điền/Nối
         </div>
       </div>
     </div>
@@ -1142,7 +1380,7 @@ function Menu({filterChapter,setFilterChapter,filterLevel,setFilterLevel,startGa
 }
 
 // ─── GAME ─────────────────────────────────────────────────────────────────────
-function Game({current,qIdx,total,score,combo,timer,phase,selected,transitioning,tfSelections,toggleTF,submitMC,submitTF,next,setScreen}){
+function Game({current,qIdx,total,score,combo,timer,phase,selected,transitioning,tfSelections,toggleTF,submitMC,submitTF,fillAnswer,setFillAnswer,submitFill,matchSelections,setMatchSelections,submitMatch,next,setScreen}){
   const warn = timer <= 10;
   const highStreak = combo >= 5;
   const tier = getStreakTier(combo);
@@ -1232,7 +1470,7 @@ function Game({current,qIdx,total,score,combo,timer,phase,selected,transitioning
           <div style={{display:"flex",gap:6,alignItems:"center",flexWrap:"wrap"}}>
             <Tag col={ch.color} small={isMobile}>{isMobile?ch.name.toUpperCase().slice(0,8)+"..":ch.name.toUpperCase()}</Tag>
             <Tag col={LEVELS[current.level]||CL.blue} small={isMobile}>{current.level}</Tag>
-            <Tag col={current.type==="tf"?CL.purple:CL.blue} small={isMobile}>{current.type==="mc"?"ABCD":"ĐÚNG/SAI"}</Tag>
+            <Tag col={current.type==="tf"?CL.purple:current.type==="fill"?"#FF8800":current.type==="match"?"#CCFF00":CL.blue} small={isMobile}>{current.type==="mc"?"ABCD":current.type==="tf"?"ĐÚNG/SAI":current.type==="fill"?"ĐIỀN TỪ":"NỐI CỘT"}</Tag>
           </div>
 
           <div style={{background:"rgba(0,0,0,0.25)",border:"1px solid rgba(0,217,255,0.12)",padding:"16px 18px",animation:transitioning?"fadeSlideOut 0.3s ease-in forwards":"fadeSlideIn 0.35s ease-out",boxShadow:phase==="playing"?"0 0 12px #00D9FF22":"none",transition:"box-shadow 0.3s"}}>
@@ -1304,6 +1542,169 @@ function Game({current,qIdx,total,score,combo,timer,phase,selected,transitioning
                 );
               })}
               {phase==="playing"&&<button style={{...btnS(CL.blue),alignSelf:"flex-start",marginTop:4}} onClick={()=>{playSound("click");submitTF();}}>⚡ KIỂM TRA</button>}
+            </div>
+          )}
+
+          {/* ── FILL IN THE BLANK ── */}
+          {current.type==="fill"&&(
+            <div style={{display:"flex",flexDirection:"column",gap:12}}>
+              {/* Example box */}
+              {current.example&&(
+                <div style={{background:"rgba(255,136,0,0.06)",border:"1px solid rgba(255,136,0,0.25)",
+                  padding:"10px 14px",borderRadius:3,position:"relative",overflow:"hidden"}}>
+                  <div style={{position:"absolute",top:0,left:0,right:0,height:2,background:"linear-gradient(90deg,transparent,#FF8800,transparent)"}}/>
+                  <div style={{fontFamily:"'Space Mono',monospace",fontSize:8,color:"#FF8800",letterSpacing:2,marginBottom:5}}>VÍ DỤ</div>
+                  <div style={{fontSize:12,color:"#94A3B8",lineHeight:1.6,fontStyle:"italic"}}>{current.example}</div>
+                </div>
+              )}
+              {/* Input */}
+              {(phase==="playing")&&(
+                <div style={{display:"flex",gap:8,alignItems:"center",flexWrap:"wrap"}}>
+                  <input
+                    value={fillAnswer}
+                    onChange={e=>setFillAnswer(e.target.value)}
+                    onKeyDown={e=>{if(e.key==="Enter") { playSound("click"); submitFill(); }}}
+                    placeholder="Nhập câu trả lời..."
+                    style={{flex:1,minWidth:isMobile?160:220,
+                      fontFamily:"'JetBrains Mono',monospace",fontSize:14,
+                      padding:"11px 16px",background:"rgba(0,0,0,0.3)",
+                      border:"1px solid rgba(0,217,255,0.3)",borderRadius:3,
+                      color:"#F1F5F9",outline:"none",
+                      boxShadow:"0 0 10px rgba(0,217,255,0.1)",
+                      caretColor:"#00D9FF"}}
+                    autoFocus
+                  />
+                  <button style={{...btnS(CL.blue),whiteSpace:"nowrap"}}
+                    onClick={()=>{playSound("click");submitFill();}}>⚡ XÁC NHẬN</button>
+                </div>
+              )}
+              {/* Result */}
+              {(phase==="answered"||phase==="timeout")&&(
+                <div style={{display:"flex",flexDirection:"column",gap:8}}>
+                  <div style={{padding:"12px 16px",borderRadius:3,
+                    background:current.accepts.map(a=>a.toLowerCase()).includes(fillAnswer.trim().toLowerCase())
+                      ?"rgba(204,255,0,0.1)":"rgba(255,0,128,0.1)",
+                    border:`1px solid ${current.accepts.map(a=>a.toLowerCase()).includes(fillAnswer.trim().toLowerCase())?CL.green:CL.red}`}}>
+                    <div style={{fontFamily:"'Space Mono',monospace",fontSize:9,color:CL.dim,marginBottom:4}}>CÂU TRẢ LỜI CỦA BẠN</div>
+                    <div style={{fontSize:15,color:current.accepts.map(a=>a.toLowerCase()).includes(fillAnswer.trim().toLowerCase())?CL.green:CL.red,fontWeight:700}}>
+                      {fillAnswer||"(bỏ trống)"}
+                    </div>
+                  </div>
+                  <div style={{padding:"12px 16px",borderRadius:3,
+                    background:"rgba(204,255,0,0.07)",border:`1px solid ${CL.green}44`}}>
+                    <div style={{fontFamily:"'Space Mono',monospace",fontSize:9,color:CL.green,marginBottom:4}}>ĐÁP ÁN ĐÚNG</div>
+                    <div style={{fontSize:15,color:CL.green,fontWeight:700}}>{current.ans}</div>
+                    {current.accepts.length>1&&<div style={{fontSize:11,color:CL.dim,marginTop:4}}>Chấp nhận: {current.accepts.join(", ")}</div>}
+                  </div>
+                </div>
+              )}
+              {phase==="timeout"&&!fillAnswer&&(
+                <div style={{padding:"12px 16px",borderRadius:3,background:"rgba(255,0,128,0.1)",border:`1px solid ${CL.red}44`}}>
+                  <div style={{fontFamily:"'Space Mono',monospace",fontSize:9,color:CL.red,marginBottom:4}}>HẾT GIỜ — ĐÁP ÁN</div>
+                  <div style={{fontSize:15,color:CL.green,fontWeight:700}}>{current.ans}</div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* ── MATCHING COLUMNS ── */}
+          {current.type==="match"&&(
+            <div style={{display:"flex",flexDirection:"column",gap:10}}>
+              <div style={{display:"flex",gap:isMobile?8:14,alignItems:"flex-start"}}>
+                {/* Column A */}
+                <div style={{flex:1,display:"flex",flexDirection:"column",gap:6}}>
+                  <div style={{fontFamily:"'Space Mono',monospace",fontSize:9,color:"#00D9FF99",
+                    letterSpacing:2,marginBottom:4,textAlign:"center"}}>CỘT A</div>
+                  {current.colA.map((item,i)=>{
+                    const sel = matchSelections[i];
+                    const answered = phase==="answered"||phase==="timeout";
+                    const isOk = answered && sel===current.ans[i];
+                    const isWrong = answered && sel!==undefined && sel!==current.ans[i];
+                    return (
+                      <div key={i} style={{display:"flex",alignItems:"center",gap:6}}>
+                        <div style={{padding:"8px 12px",borderRadius:3,flex:1,fontSize:isMobile?11:12,
+                          lineHeight:1.5,color:"#E2E8F0",
+                          background:isOk?"rgba(204,255,0,0.1)":isWrong?"rgba(255,0,128,0.1)":"rgba(0,0,0,0.2)",
+                          border:`1px solid ${isOk?CL.green:isWrong?CL.red:"rgba(255,255,255,0.1)"}`,
+                          boxShadow:isOk?`0 0 8px ${CL.green}22`:isWrong?`0 0 8px ${CL.red}22`:"none"}}>
+                          <span style={{fontFamily:"'Orbitron',monospace",fontSize:10,
+                            color:CL.blue,marginRight:6}}>{i+1}.</span>{item}
+                        </div>
+                        {/* Arrow */}
+                        <div style={{fontFamily:"'Orbitron',monospace",fontSize:12,
+                          color:sel!==undefined?CL.blue:CL.dim}}>→</div>
+                        {/* Selected B label */}
+                        <div style={{minWidth:isMobile?24:28,height:28,display:"flex",alignItems:"center",
+                          justifyContent:"center",borderRadius:2,
+                          background:isOk?`${CL.green}22`:isWrong?`${CL.red}22`:sel!==undefined?`${CL.blue}22`:"rgba(255,255,255,0.04)",
+                          border:`1px solid ${isOk?CL.green:isWrong?CL.red:sel!==undefined?CL.blue:"rgba(255,255,255,0.1)"}`,
+                          fontFamily:"'Orbitron',monospace",fontSize:10,fontWeight:700,
+                          color:isOk?CL.green:isWrong?CL.red:sel!==undefined?CL.blue:CL.dim}}>
+                          {sel!==undefined ? String.fromCharCode(65+sel) : "?"}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+                {/* Column B */}
+                <div style={{flex:1,display:"flex",flexDirection:"column",gap:6}}>
+                  <div style={{fontFamily:"'Space Mono',monospace",fontSize:9,color:"#D946EF99",
+                    letterSpacing:2,marginBottom:4,textAlign:"center"}}>CỘT B</div>
+                  {current.colB.map((item,bi)=>{
+                    const answered = phase==="answered"||phase==="timeout";
+                    const isUsed = Object.values(matchSelections).includes(bi);
+                    const isCorrectPos = answered && current.ans.includes(bi) &&
+                      matchSelections[current.ans.indexOf(bi)]===bi;
+                    return (
+                      <button key={bi}
+                        disabled={answered || (isUsed && phase==="playing")}
+                        onClick={()=>{
+                          if(phase!=="playing") return;
+                          playSound("click");
+                          // Find first unmatched A slot and assign this B
+                          const firstFree = current.colA.findIndex((_,i)=>matchSelections[i]===undefined);
+                          if(firstFree!==-1){
+                            setMatchSelections(s=>({...s,[firstFree]:bi}));
+                          }
+                        }}
+                        style={{padding:"8px 10px",borderRadius:3,fontSize:isMobile?11:12,
+                          lineHeight:1.5,color:answered?(isCorrectPos?CL.green:CL.dim):isUsed?"#64748B88":"#E2E8F0",
+                          background:answered?(isCorrectPos?"rgba(204,255,0,0.1)":"rgba(0,0,0,0.2)"):isUsed?"rgba(255,255,255,0.02)":"rgba(0,0,0,0.2)",
+                          border:`1px solid ${answered?(isCorrectPos?CL.green+"44":"rgba(255,255,255,0.06)"):isUsed?"rgba(255,255,255,0.05)":"rgba(217,70,239,0.3)"}`,
+                          cursor:answered||isUsed?"default":"pointer",
+                          outline:"none",textAlign:"left",transition:"all 0.2s",
+                          textDecoration:isUsed&&!answered?"line-through":undefined}}>
+                        <span style={{fontFamily:"'Orbitron',monospace",fontSize:10,
+                          color:CL.purple,marginRight:6}}>{String.fromCharCode(65+bi)}.</span>{item}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+              {/* Controls */}
+              {phase==="playing"&&(
+                <div style={{display:"flex",gap:8,marginTop:4,flexWrap:"wrap"}}>
+                  <button style={btnS(CL.blue)} onClick={()=>{playSound("click");submitMatch();}}>⚡ KIỂM TRA</button>
+                  <button style={btnS(CL.dim,true,true)}
+                    onClick={()=>{playSound("click");setMatchSelections({});}}>↺ Đặt lại</button>
+                </div>
+              )}
+              {/* Answer reveal */}
+              {(phase==="answered"||phase==="timeout")&&(
+                <div style={{padding:"10px 14px",borderRadius:3,background:"rgba(204,255,0,0.06)",
+                  border:`1px solid ${CL.green}33`,marginTop:4}}>
+                  <div style={{fontFamily:"'Space Mono',monospace",fontSize:9,color:CL.green,letterSpacing:2,marginBottom:6}}>ĐÁP ÁN ĐÚNG</div>
+                  <div style={{display:"flex",flexDirection:"column",gap:4}}>
+                    {current.colA.map((a,i)=>(
+                      <div key={i} style={{fontSize:11,color:"#94A3B8",fontFamily:"'Space Mono',monospace"}}>
+                        <span style={{color:CL.blue}}>{i+1}. {a}</span>
+                        <span style={{color:CL.dim,margin:"0 6px"}}>→</span>
+                        <span style={{color:CL.green}}>{String.fromCharCode(65+current.ans[i])}. {current.colB[current.ans[i]]}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
