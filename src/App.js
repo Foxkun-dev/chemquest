@@ -1133,6 +1133,7 @@ export default function App() {
       </div>
 
       <Footer/>
+      <NoticeTag/>
       {screen==="menu"   && <Menu filterChapter={filterChapter} setFilterChapter={setFilterChapter} filterLevel={filterLevel} setFilterLevel={setFilterLevel} startGame={startGame}/>}
       {screen==="game" && current && <Game transitioning={transitioning} current={current} qIdx={qIdx} total={queue.length} score={score} combo={combo} timer={timer} phase={phase} selected={selected} tfSelections={tfSelections} toggleTF={(i,v)=>{ if(phase==="playing") setTfSelections(s=>({...s,[i]:v})); }} submitMC={submitMC} submitTF={submitTF} fillAnswer={fillAnswer} setFillAnswer={setFillAnswer} submitFill={submitFill} matchSelections={matchSelections} setMatchSelections={setMatchSelections} submitMatch={submitMatch} next={next} setScreen={setScreen}/>}
       {screen==="summary"&& <Summary results={results} score={score} total={queue.length} setScreen={setScreen} startGame={startGame}/>}
@@ -1859,6 +1860,66 @@ function Summary({results,score,total,setScreen,startGame}){
   );
 }
 
+// ─── NOTICE TAG ───────────────────────────────────────────────────────────────
+function NoticeTag() {
+  const [open, setOpen] = useState(true);
+  return (
+    <div style={{position:"fixed",top:12,left:12,zIndex:10000}}>
+      {/* Collapsed badge */}
+      {!open && (
+        <button onClick={()=>setOpen(true)}
+          style={{display:"flex",alignItems:"center",gap:6,
+            background:"rgba(255,0,60,0.15)",border:"1px solid #FF003C",
+            borderRadius:4,padding:"5px 10px",cursor:"pointer",outline:"none",
+            boxShadow:"0 0 12px #FF003C55",animation:"pulsRed 1.5s ease-in-out infinite"}}>
+          <div style={{width:8,height:8,borderRadius:"50%",background:"#FF003C",
+            boxShadow:"0 0 8px #FF003C",animation:"pulsRed 1s ease-in-out infinite"}}/>
+          <span style={{fontFamily:"'Space Mono',monospace",fontSize:9,
+            color:"#FF003C",letterSpacing:2,fontWeight:700}}>!</span>
+        </button>
+      )}
+      {/* Expanded notice */}
+      {open && (
+        <div style={{background:"rgba(10,18,35,0.97)",border:"1px solid #FF003C",
+          borderRadius:6,padding:"14px 16px",minWidth:220,maxWidth:300,
+          boxShadow:"0 0 24px #FF003C44",animation:"fadeSlideIn 0.25s ease"}}>
+          {/* Top accent */}
+          <div style={{position:"absolute",top:0,left:0,right:0,height:2,borderRadius:"6px 6px 0 0",
+            background:"linear-gradient(90deg,transparent,#FF003C,transparent)"}}/>
+          {/* Header */}
+          <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:10}}>
+            <div style={{display:"flex",alignItems:"center",gap:7}}>
+              <div style={{width:8,height:8,borderRadius:"50%",background:"#FF003C",
+                boxShadow:"0 0 8px #FF003C"}}/>
+              <span style={{fontFamily:"'Space Mono',monospace",fontSize:9,
+                color:"#FF003C",letterSpacing:2,fontWeight:700}}>THÔNG BÁO QUAN TRỌNG</span>
+            </div>
+            <button onClick={()=>setOpen(false)}
+              style={{background:"transparent",border:"none",cursor:"pointer",
+                color:"#64748B",fontSize:14,outline:"none",lineHeight:1,
+                padding:"0 2px"}}>✕</button>
+          </div>
+          {/* Divider */}
+          <div style={{height:1,background:"rgba(255,0,60,0.2)",marginBottom:10}}/>
+          {/* Message */}
+          <div style={{fontFamily:"'JetBrains Mono',monospace",fontSize:12,
+            color:"#F1F5F9",lineHeight:1.7}}>
+            <span style={{color:"#00D9FF",fontWeight:700,fontFamily:"'Orbitron',monospace",
+              fontSize:13}}>CHEMQUEST</span>
+            <br/>
+            <span style={{color:"#94A3B8"}}>được viết bởi</span>
+            <br/>
+            <span style={{background:"linear-gradient(135deg,#D946EF,#00D9FF)",
+              WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",
+              fontWeight:700,fontSize:14,fontFamily:"'Orbitron',monospace",
+              letterSpacing:1}}>Duy Lâm</span>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ─── FOOTER ───────────────────────────────────────────────────────────────────
 function Footer(){
   return (
@@ -1908,6 +1969,9 @@ const CSS = `
   @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-5px)} }
   @keyframes glow { 0%,100%{box-shadow:0 0 10px #CCFF0044} 50%{box-shadow:0 0 28px #CCFF0099} }
   ::-webkit-scrollbar{width:3px} ::-webkit-scrollbar-thumb{background:rgba(0,217,255,0.2)}
+  @keyframes pulsRed {
+    0%,100%{box-shadow:0 0 6px #FF003C44} 50%{box-shadow:0 0 18px #FF003Caa}
+  }
   button:hover{opacity:0.9;transform:translateY(-1px);box-shadow:0 4px 15px rgba(0,0,0,0.3)!important}
   button:active{transform:translateY(0) scale(0.98)!important}
   @keyframes shimmer {
