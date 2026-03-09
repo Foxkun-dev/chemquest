@@ -1892,7 +1892,7 @@ function NoticeTag() {
               <div style={{width:8,height:8,borderRadius:"50%",background:"#FF003C",
                 boxShadow:"0 0 8px #FF003C"}}/>
               <span style={{fontFamily:"'Space Mono',monospace",fontSize:9,
-                color:"#FF003C",letterSpacing:2,fontWeight:700}}>THÔNG BÁO QUAN TRỌNG</span>
+                color:"#FF003C",letterSpacing:2,fontWeight:700}}>Lưu Ý</span>
             </div>
             <button onClick={()=>setOpen(false)}
               style={{background:"transparent",border:"none",cursor:"pointer",
@@ -1907,12 +1907,12 @@ function NoticeTag() {
             <span style={{color:"#00D9FF",fontWeight:700,fontFamily:"'Orbitron',monospace",
               fontSize:13}}>CHEMQUEST</span>
             <br/>
-            <span style={{color:"#94A3B8"}}>được viết bởi</span>
+            <span style={{color:"#94A3B8"}}>Trang Web này không được tạo bởi AI mà là do công sức của Duy Lâm và tập thể lớp 11B1</span>
             <br/>
             <span style={{background:"linear-gradient(135deg,#D946EF,#00D9FF)",
               WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",
               fontWeight:700,fontSize:14,fontFamily:"'Orbitron',monospace",
-              letterSpacing:1}}>Duy Lâm</span>
+              letterSpacing:1}}>Trân Trọng</span>
           </div>
         </div>
       )}
